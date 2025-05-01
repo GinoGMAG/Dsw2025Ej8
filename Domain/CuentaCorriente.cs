@@ -8,8 +8,11 @@ namespace Dsw2025Ej8.Domain
 {
     public class CuentaCorriente : CuentaBancaria
     {
+
         public decimal LimiteDeDescubierto { get; set; }
+
         public decimal Comision { get; set; }
+
         public CuentaCorriente(string numero, decimal saldo)
             : base(numero, saldo)
         {
@@ -18,6 +21,15 @@ namespace Dsw2025Ej8.Domain
         {
             monto -= monto * Comision;
             Saldo += monto;
+            if (monto <= 0)
+            {
+                throw new Exceptions.MontoNoValido();
+            }
+            if (Estado != Estado.Activa)
+            {
+                throw new Exceptions.CuentaNoActiva(Estado.ToString());
+            }
+
         }
         public override void Retirar(decimal monto)
         {
@@ -26,10 +38,24 @@ namespace Dsw2025Ej8.Domain
                 Saldo -= monto;
             }
 
-            if (Saldo < 0)
+            if (Saldo - monto <= -LimiteDeDescubierto)
             {
                 Estado = Estado.Suspendida;
+                throw new Exceptions.SaldoInsuficiente();
             }
+
+
+            if (monto<=0)
+            {
+                throw new Exceptions.MontoNoValido();
+            }
+
+            if (Estado != Estado.Activa)
+            {
+                throw new Exceptions.CuentaNoActiva(Estado.ToString());
+            }
+
+       
         }
 
     }

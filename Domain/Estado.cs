@@ -2,7 +2,7 @@
 
 public enum Estado
 {
-    Activa = 1,
+    Activa,
     Inactiva,
     Suspendida
 }
